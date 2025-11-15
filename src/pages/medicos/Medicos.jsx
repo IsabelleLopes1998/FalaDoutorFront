@@ -1,5 +1,24 @@
 import { useEffect, useState } from "react";
+import MedicoFormModal from "../../components/MedicoFormModal";
 
+
+function formatarPlanosSaude(valor){
+    if(!valor) return [];
+    if(Array.isArray(valor)){
+        return valor.join(', ')
+    }
+
+    if(typeof valor ==='string'){
+        return valor
+        .replace(/[{}]/g, "")
+        .split(',')
+        .map((plano) => plano.trim())
+        .filter(Boolean)
+        .join(', ');
+    }
+
+    return String(valor);
+}
 
 function Medicos() { 
 
@@ -7,6 +26,10 @@ function Medicos() {
     const [medicos, setMedicos] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro,setErro] = useState(null);
+
+    const [modalAberto, setModalAberto] = useState(false);
+    const [modoModal, setModoModal] = useState('criar');
+    const [medicoSelecionado, setMedicoSelecionado] = useState(null);
 
     useEffect(() => {
 
@@ -34,6 +57,23 @@ function Medicos() {
         buscarMedicos();
     }, []);
 
+    async function abrirModalCriar(p) {
+        setModoModal('criar');
+        setMedicoSelecionado(null);
+        setModalAberto(true);
+        
+    }
+
+    async function abrirModalEditar(medico) { 
+        setModoModal('editar');
+        setMedicoSelecionado(medico);
+        setModalAberto(true);
+    }
+
+    async function fecharModal() {
+        setModalAberto(false);
+    }
+
     async function excluirMedico(id){
         const confirmar = window.confirm('Tem certeza que deseja excluir este médico?');
         if(!confirmar) return;
@@ -58,12 +98,64 @@ function Medicos() {
     }
 
 
+    async function handleSubmitMedico(dadosForm) {
+
+        try{
+
+            if(modoModal === 'criar'){
+                const resposta = await fetch('http://localhost:3000/medicos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dadosForm),
+                });
+
+                if(!resposta.ok){
+                    throw new Error("Erro ao criar médico.");
+                }  
+            const medicoCriado = await resposta.json();
+            setMedicos((anteriores)=> [...anteriores, medicoCriado]);   
+
+            }else if(modoModal==='editar' && medicoSelecionado){
+                const resposta = await fetch(`http://localhost:3000/medicos/${medicoSelecionado.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dadosForm),
+                });
+
+                if(!resposta.ok){
+                    throw new Error("Erro ao atualizar médico.");
+                }
+                const medicoAtualizado = await resposta.json();
+
+                setMedicos((anteriores) => 
+                    anteriores.map((medico) => 
+                        medico.id === medicoAtualizado.id ? medicoAtualizado: medico
+                    )
+                );
+            }
+
+            fecharModal();
+
+        }catch (error) {
+            console.error(error);
+            alert('Não foi possível salvar o médico.');   
+        }
+
+
+    }        
+    
+
+
     return (
 
         <div className="page-container">
             <header>
                 <h2>Médicos</h2>
-                <button type="button">
+                <button type="button" onClick={abrirModalCriar}>
                     Cadastrar Médico
                 </button>
             </header>
@@ -96,9 +188,9 @@ function Medicos() {
                                                 <td>{medico.cpf}</td>
                                                 <td>{medico.crm}</td>
                                                 <td>{medico.dataNascimento ? new Date(medico.dataNascimento).toLocaleDateString('pt-BR'): ''}</td>
-                                                <td>{Array.isArray(medico.planosSaude)? medico.planosSaude.join(', '): medico.planosSaude}</td>
+                                                <td>{formatarPlanosSaude(medico.planosSaude)}</td>
                                                 <td>
-                                                    <button type="button">Editar</button>
+                                                    <button type="button" onClick={() => abrirModalEditar(medico)}>Editar</button>
                                                     <button type="button" onClick={()=> excluirMedico(medico.id)} style={{marginLeft:'8px'}}>Excluir</button>
                                                 </td>
                                             </tr>
@@ -112,6 +204,15 @@ function Medicos() {
                 )}
 
             </section>
+
+            <MedicoFormModal
+                isOpen={modalAberto}
+                mode={modoModal}
+                initialData={medicoSelecionado}
+                onClose={fecharModal}
+                onSubmit={handleSubmitMedico}
+            />
+
         </div>
 
     )
