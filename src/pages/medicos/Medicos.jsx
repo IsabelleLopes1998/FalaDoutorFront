@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import MedicoFormModal from "../../components/MedicoFormModal";
+import './Medicos.css';
 
 
 function formatarPlanosSaude(valor){
@@ -151,70 +152,87 @@ function Medicos() {
 
 
     return (
+        <>
+            <div className="page-header">
+                <div>
+                    <h1 className="page-title">Médicos</h1>
 
-        <div className="page-container">
-            <header>
-                <h2>Médicos</h2>
-                <button type="button" onClick={abrirModalCriar}>
-                    Cadastrar Médico
+                </div>
+
+                <button
+                    type="button"
+                    className="button button-primary"
+                    onClick={abrirModalCriar}
+                > Cadastrar médico
                 </button>
-            </header>
+            </div>
 
-            <section className="page-contente">
                 {carregando && <p>Carregando médicos...</p>}
-                {erro && <p style={{color: 'red'}}>{erro}</p>}
+                {erro && (<p style={{color:'red', marginBottom: '1rem'}}>{erro}</p>)}
 
                 {!carregando && !erro && (
-                    <>
-                        {medicos.length === 0 ? (
-                                <p>Nenhum médico cadastrado.</p>
-                            ) : (
-                                <table className="tabela-medicos">
-                                    <thead>
-                                        <tr>
-                                            <th>Nome Completo</th>
-                                            <th>CPF</th>
-                                            <th>CRM</th>
-                                            <th>Data de Nascimento</th>
-                                            <th>Planos de saúde</th>
-                                            <th>Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {medicos.map((medico) => (
+                    <div className="table-wrapper">
+                        <table className="medicos-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome Completo</th>
+                                    <th>CPF</th>
+                                    <th>CRM</th>
+                                    <th>Data de Nascimento</th>
+                                    <th>Planos de Saúde</th>
+                                    <th style={{ width: '150px' }}>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {medicos.map((medico) => (
+                                    <tr key={medico.id}>
+                                        <td>{medico.nomeCompleto}</td>
+                                        <td>{medico.cpf}</td>
+                                        <td>{medico.crm}</td>
+                                        <td>{medico.dataNascimento? new Date( medico.dataNascimento,).toLocaleDateString('pt-BR'): ''}</td>
+                                        <td>{formatarPlanosSaude(medico.planosSaude)}</td>
+                                        <td>
+                                            <div className="medicos-actions">
+                                                <button
+                                                    type="button"
+                                                    className="button button-secondary"
+                                                    onClick={() => abrirModalEditar(medico)}
+                                                >
+                                                    Editar
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="button button-danger"
+                                                    onClick={() => excluirMedico(medico.id)}
+                                                >
+                                                    Excluir
+                                                </button>
+                                                </div>
+                                            </td>
+                                    </tr>
+                                ))}
 
-                                            <tr key={medico.id}>
-                                                <td>{medico.nomeCompleto}</td>
-                                                <td>{medico.cpf}</td>
-                                                <td>{medico.crm}</td>
-                                                <td>{medico.dataNascimento ? new Date(medico.dataNascimento).toLocaleDateString('pt-BR'): ''}</td>
-                                                <td>{formatarPlanosSaude(medico.planosSaude)}</td>
-                                                <td>
-                                                    <button type="button" onClick={() => abrirModalEditar(medico)}>Editar</button>
-                                                    <button type="button" onClick={()=> excluirMedico(medico.id)} style={{marginLeft:'8px'}}>Excluir</button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            )
-                        }
-                                    
-                    </>
+
+                                {medicos.length === 0 && (
+                                    <tr>
+                                        <td colSpan="6" style={{ textAlign: 'center' }}>
+                                            Nenhum médico encontrado.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
 
-            </section>
-
-            <MedicoFormModal
-                isOpen={modalAberto}
-                mode={modoModal}
-                initialData={medicoSelecionado}
-                onClose={fecharModal}
-                onSubmit={handleSubmitMedico}
-            />
-
-        </div>
-
+                <MedicoFormModal
+                    isOpen={modalAberto}
+                    mode={modoModal}
+                    initialData={medicoSelecionado}
+                    onClose={fecharModal}
+                    onSubmit={handleSubmitMedico}
+                />
+        </> 
     )
 
 }

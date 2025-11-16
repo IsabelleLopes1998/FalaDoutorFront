@@ -1,68 +1,158 @@
+/* src/index.css */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  width: 100%;
+  color: #1f2933;
+  background-color: #f3f4f6;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Layout geral */
+
+.app-root {
   min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.app-header {
+  background: #2b6b25;
+  color: #f9fafb;
+  padding: 0.75rem 0;
+  box-shadow: 0 2px 4px rgba(27, 78, 38, 0.25);
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+.app-header-inner {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.app-logo {
+  font-weight: 700;
+  font-size: 1.4rem;
+  letter-spacing: 0.04em;
+}
+
+.app-nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.app-nav-link {
+  font-size: 20px;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.app-nav-link:hover {
+  background: rgba(249, 250, 251, 0.12);
+}
+
+/* Área principal */
+
+.app-main {
+  flex: 1;
+  padding: 1.5rem 0 2.5rem;
+}
+
+.page-container {
+  width: 80%;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Utilitários */
+
+.page-title {
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.page-subtitle {
+  margin: 0.25rem 0 1.5rem;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+/* Botões genéricos */
+
+.button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease,
+    transform 0.05s ease;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.button:active {
+  transform: translateY(1px);
+}
+
+.button-primary {
+  width: 175px;
+  height: 40px;
+  background: #319e55;
+  color: #f9fafb;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.4);
+}
+
+.button-primary:hover {
+  background: #319e55;
+}
+
+.button-secondary {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.button-secondary:hover {
+  background: #d1d5db;
+}
+
+.button-danger {
+  background: #ef4444;
+  color: #f9fafb;
+}
+
+.button-danger:hover {
+  background: #dc2626;
+}
+
+/* Espaçamento para cabeçalhos de página */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
 }

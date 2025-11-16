@@ -103,7 +103,7 @@ function medicoFormModal({isOpen, mode ='criar', initialData, onClose, onSubmit}
 
 
     return(
-        <div className="moda-backdrop" onClick={onClose}>
+        <div className="modal-overlay " onClick={onClose}>
             <div className="modal-container" onClick={(e)=> e.stopPropagation()}>
                 <header className="modal-header">
                     <h2>{titulo}</h2>

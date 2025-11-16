@@ -1,0 +1,39 @@
+.table-wrapper {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.medicos-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.medicos-table thead {
+  background: #f3f4f6;
+}
+
+.medicos-table th,
+.medicos-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.medicos-table th {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.medicos-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.medicos-actions {
+  display: flex;
+  gap: 0.5rem;
+}
