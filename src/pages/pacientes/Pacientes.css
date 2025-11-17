@@ -1,0 +1,39 @@
+.table-wrapper {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.pacientes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.pacientes-table thead {
+  background: #f3f4f6;
+}
+
+.pacientes-table th,
+.pacientes-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.pacientes-table th {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.pacientes-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.pacientes-actions {
+  display: flex;
+  gap: 0.5rem;
+}

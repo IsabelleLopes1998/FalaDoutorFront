@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import MedicoFormModal from "../../components/MedicoFormModal";
+import MedicoFormModal from "../../components/medicosModal/MedicoFormModal";
 import './Medicos.css';
 
 

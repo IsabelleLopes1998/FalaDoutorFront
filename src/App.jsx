@@ -11,7 +11,6 @@ function App() {
         <header className="app-header" >
           <div className="app-header-inner">
             <span className='app-logo'>Fala Doutor</span>
-
             <nav className='app-nav'>
               <Link to="/" className='app-nav-link'>Home</Link>
               <Link to="/medicos" className='app-nav-link'>Médicos</Link>

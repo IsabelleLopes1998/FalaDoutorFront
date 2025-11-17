@@ -1,20 +1,15 @@
-import { use, useEffect, useState } from "react";
-import { fetchPlanosSaude } from "../services/api";
-import './MedicoFormModal.css'
+import { useEffect, useState } from "react";
+import { fetchPlanosSaude } from "../../services/api";
+import './PacienteFormModal.css'
 
 
 function normalizarPlanosSaude(valor){
-    if(!valor) return [];
-    if(Array.isArray(valor)) return valor;
+    // Paciente tem apenas 1 plano (string), não array
+    if(!valor) return '';
     if(typeof valor === 'string'){
-        return valor
-        .replace(/[{}]/g, "")
-        .split(',')
-        .map((plano) => plano.trim())
-        .filter(Boolean)
+        return valor.trim();
     }
-
-    return [];
+    return '';
 }
 
 function validarCPF(cpf){
@@ -50,15 +45,14 @@ function formatarCPF(valor) {
     return `${apenasNumeros.slice(0,3)}.${apenasNumeros.slice(3,6)}.${apenasNumeros.slice(6,9)}-${apenasNumeros.slice(9,11)}`;
 }
 
-function medicoFormModal({isOpen, mode ='criar', initialData, onClose, onSubmit}) {
+function pacienteFormModal({isOpen, mode ='criar', initialData, onClose, onSubmit}) {
 
     if(!isOpen) return null;
 
     const[nomeCompleto, setNomeCompleto] = useState('');
     const[cpf, setCpf] = useState('');
-    const[crm, setCrm] = useState('');
     const[dataNascimento, setDataNascimento] = useState('');
-    const[planosSaude, setPlanosSaude] = useState([]);
+    const[planoSaude, setPlanoSaude] = useState('');
 
     const [opcoesPlanos, setOpcoesPlanos] = useState([]);
     const [carregandoPlanos, setCarregandoPlanos] = useState(true);
@@ -95,30 +89,22 @@ function medicoFormModal({isOpen, mode ='criar', initialData, onClose, onSubmit}
             setNomeCompleto(initialData.nomeCompleto || '');
             const cpfDoBackend = initialData.cpf || '';
             setCpf(formatarCPF(cpfDoBackend));
-            setCrm(initialData.crm || '');
             const dataISO = initialData.dataNascimento ? new Date(initialData.dataNascimento).toISOString().substring(0,10) : '';
             setDataNascimento(dataISO);
-            setPlanosSaude(normalizarPlanosSaude(initialData.planosSaude));
+            setPlanoSaude(normalizarPlanosSaude(initialData.planoSaude));
         }else{
             setNomeCompleto('');
             setCpf('');
-            setCrm('');
             setDataNascimento('');
-            setPlanosSaude([]);
+            setPlanoSaude('');
         }
 
     }, [initialData, isOpen])
     
 
-    function handleTogglePlano(plano){
-        console.log('Toggling plano:', plano);
-        setPlanosSaude((anteriores)=>{
-            if(anteriores.includes(plano)){
-                return anteriores.filter((p)=> p !== plano);
-            }else{
-                return [...anteriores, plano];
-            }
-        })
+    function handleSelecionarPlano(plano){
+        // Paciente tem apenas 1 plano, então apenas define o valor
+        setPlanoSaude(plano);
     }
 
 
@@ -135,15 +121,14 @@ function medicoFormModal({isOpen, mode ='criar', initialData, onClose, onSubmit}
         
         const dados ={
             nomeCompleto,
-            cpf: cpfLimpo,  // Envia apenas números (sem pontos e hífen)
-            crm,
+            cpf: cpfLimpo,
             dataNascimento: dataNascimento ? new Date (dataNascimento).toISOString() : null,
-            planosSaude,
+            planoSaude,
         };
         console.log('Submitting form with data:', dados);
         onSubmit(dados);
     }
-    const titulo = mode === 'editar' ? 'Editar Médico' : 'Cadastrar Médico';
+    const titulo = mode === 'editar' ? 'Editar Paciente' : 'Cadastrar Paciente';
     const textoBotao = mode ==='editar' ? 'Salvar Alterações' : 'Cadastrar';
 
 
@@ -185,34 +170,37 @@ function medicoFormModal({isOpen, mode ='criar', initialData, onClose, onSubmit}
                         {erroCpf && <span style={{color: 'red', fontSize: '0.85rem'}}>{erroCpf}</span>}
                     </div>
                     <div className="modal-field">
-                        <label>CRM</label>
-                        <input type="text" value={crm} onChange={(e)=> setCrm(e.target.value)} required/>
-                    </div>
-                    <div className="modal-field">
                         <label>Data de Nascimento</label>
                         <input type="date" value={dataNascimento} onChange={(e)=> setDataNascimento(e.target.value)} required/>
                     </div>
                     <div className="modal-field">
-                        <label>Planos de saúde</label>
-                        <div className="modal-checkbox-group">
-                            {carregandoPlanos && <p>Carregando planos de saúde...</p>}
+                        <label>Plano de saúde</label>
+                        {carregandoPlanos && <p>Carregando planos de saúde...</p>}
 
-                            {erroPlanos && (<p className="erro-planos" style={{color:'red'}}>
-                                {erroPlanos}</p>)}
+                        {erroPlanos && (<p className="erro-planos" style={{color:'red'}}>
+                            {erroPlanos}</p>)}
 
-                            {!carregandoPlanos && !erroPlanos && opcoesPlanos.map((plano) => (
-                                <label key={plano} className="checkbox-item">
-                                    <input
-                                        type="checkbox"
-                                        value={plano}
-                                        checked={planosSaude.includes(plano)}
-                                        onChange={() => handleTogglePlano(plano)}
-                                    />
-                                    {plano}
-                                </label>
-                            ))}
-                            
-                        </div>
+                        {!carregandoPlanos && !erroPlanos && (
+                            <select 
+                                value={planoSaude} 
+                                onChange={(e) => handleSelecionarPlano(e.target.value)}
+                                required
+                                style={{
+                                    padding: '6px 8px',
+                                    borderRadius: '4px',
+                                    border: '1px solid #ccc',
+                                    fontSize: '0.95rem',
+                                    width: '100%'
+                                }}
+                            >
+                                <option value="">Selecione um plano</option>
+                                {opcoesPlanos.map((plano) => (
+                                    <option key={plano} value={plano}>
+                                        {plano}
+                                    </option>
+                                ))}
+                            </select>
+                        )}
                     </div>
 
                     <footer className="modal-footer">
@@ -226,4 +214,4 @@ function medicoFormModal({isOpen, mode ='criar', initialData, onClose, onSubmit}
     )
 }
 
-export default medicoFormModal;
+export default pacienteFormModal;
