@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import MedicoFormModal from "../../components/medicosModal/MedicoFormModal";
+import ConfirmExcluir from '../../components/ModalExcluir/ConfirmExcluir.jsx';
 import './Medicos.css';
 
 
@@ -31,6 +32,9 @@ function Medicos() {
     const [modalAberto, setModalAberto] = useState(false);
     const [modoModal, setModoModal] = useState('criar');
     const [medicoSelecionado, setMedicoSelecionado] = useState(null);
+
+    const [confirmacaoExclusao, setConfirmacaoExclusao] = useState(false);
+    const [medicoParaExcluir, setMedicoParaExcluir] = useState(null);
 
     useEffect(() => {
 
@@ -75,22 +79,33 @@ function Medicos() {
         setModalAberto(false);
     }
 
-    async function excluirMedico(id){
-        const confirmar = window.confirm('Tem certeza que deseja excluir este médico?');
-        if(!confirmar) return;
+    async function abrirConfirmacaoExclusao(medico){
+        setConfirmacaoExclusao(true);
+        setMedicoParaExcluir(medico);
+    }
+    function cancelarExclusao(){
+        setConfirmacaoExclusao(false);
+        setMedicoParaExcluir(null);
+    }
+
+    async function excluirMedico(){
+        if(!medicoParaExcluir || !medicoParaExcluir.id) return;
 
         try {
-            const reposta = await fetch(`http://localhost:3000/medicos/${id}`, {
+            const resposta = await fetch(`http://localhost:3000/medicos/${medicoParaExcluir.id}`, {
                 method: 'DELETE',
             });
 
-            if(!reposta.ok){
+            if(!resposta.ok){
                 throw new Error("Erro ao excluir médico.");
             }
 
             setMedicos((medicosAnteriores) => 
-                medicosAnteriores.filter((m) => m.id !== id)
-        );
+                medicosAnteriores.filter((m) => m.id !== medicoParaExcluir.id)
+            );
+
+            setConfirmacaoExclusao(false);
+            setMedicoParaExcluir(null);
         
         }catch (error) {
             console.error(error);
@@ -203,7 +218,7 @@ function Medicos() {
                                                 <button
                                                     type="button"
                                                     className="button button-danger"
-                                                    onClick={() => excluirMedico(medico.id)}
+                                                    onClick={() => abrirConfirmacaoExclusao(medico)}
                                                 >
                                                     Excluir
                                                 </button>
@@ -231,6 +246,16 @@ function Medicos() {
                     initialData={medicoSelecionado}
                     onClose={fecharModal}
                     onSubmit={handleSubmitMedico}
+                />
+                <ConfirmExcluir
+                    isOpen={confirmacaoExclusao}
+                    title="Confirmar exclusão"
+                    message={medicoParaExcluir ? `Tem certeza que deseja excluir o(a) médico(a) ${medicoParaExcluir.nomeCompleto}?` : 'Tem certeza que deseja excluir este médico?'}
+                    confirmText="Excluir"
+                    cancelText="Cancelar"
+                    onClose={cancelarExclusao}
+                    onConfirm={() => excluirMedico()}
+                    onCancel={cancelarExclusao}
                 />
         </> 
     )

@@ -84,7 +84,7 @@ function Pacientes() {
         if(!pacienteParaExcluir || !pacienteParaExcluir.id) return;
 
         try {
-            console.log('Excluindo paciente com ID:', pacienteParaExcluir.id);
+            
             const resposta = await fetch(`http://localhost:3000/pacientes/${pacienteParaExcluir.id}`, {
                 method: 'DELETE',
             });
@@ -241,7 +241,7 @@ function Pacientes() {
                 <ConfirmExcluir
                     isOpen={confirmacaoExclusao}
                     title="Confirmar exclusão"
-                    message={pacienteParaExcluir ? `Tem certeza que deseja excluir o paciente ${pacienteParaExcluir.nomeCompleto}?` : 'Tem certeza que deseja excluir este paciente?'}
+                    message={pacienteParaExcluir ? `Tem certeza que deseja excluir o(a) paciente ${pacienteParaExcluir.nomeCompleto}?` : 'Tem certeza que deseja excluir este paciente?'}
                     confirmText="Excluir"
                     cancelText="Cancelar"
                     onClose={cancelarExclusao}
