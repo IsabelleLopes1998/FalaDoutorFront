@@ -7,7 +7,6 @@ function ConfirmExcluir({
     message = 'Tem certeza que deseja excluir?',
     confirmText = 'Excluir',
     cancelText = 'Cancelar',
-    onClose, 
     onConfirm,
     onCancel,
     }) {
