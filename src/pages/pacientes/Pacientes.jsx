@@ -6,7 +6,7 @@ import './Pacientes.css'
 
 
 function formatarPlanosSaude(valor){
-    // Paciente tem apenas 1 plano (string), não array
+    
     if(!valor) return '';
     if(typeof valor === 'string'){
         return valor.trim();
@@ -15,7 +15,6 @@ function formatarPlanosSaude(valor){
 }
 
 function Pacientes() { 
-
 
     const [pacientes, setPacientes] = useState([]);
     const [carregando, setCarregando] = useState(true);
