@@ -1,128 +1,117 @@
-import { useEffect, useState } from "react";
-import MedicoFormModal from "../../components/medicosModal/MedicoFormModal";
+import { useEffect, useState } from 'react';
 import ConfirmExcluir from '../../components/ModalExcluir/ConfirmExcluir.jsx';
-import './Medicos.css';
+import PlanoFormModal from '../../components/planosModal/PlanoFormModal.jsx';
+import './Planos.css'
 
 
-function formatarPlanosSaude(valor) {
-  if (!valor) return '';
 
-  if (Array.isArray(valor)) {
-    return valor
-      .map(p => (typeof p === 'object' && p !== null ? p.nome : p))
-      .filter(Boolean)
-      .join(', ');
-  }
-  if (typeof valor === 'string') {
-    return valor
-      .replace(/[{}]/g, '')
-      .split(',')
-      .map(p => p.trim())
-      .filter(Boolean)
-      .join(', ');
-  }
-  return String(valor);
+function formatarPlanosSaude(valor){
+    
+    if(!valor) return '';
+    if(typeof valor === 'string'){
+        return valor.trim();
+    }
+    return String(valor);
 }
 
+function Planos() { 
 
-function Medicos() { 
-
-
-    const [medicos, setMedicos] = useState([]);
+    const [planos, setPlanos] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro,setErro] = useState(null);
 
     const [modalAberto, setModalAberto] = useState(false);
     const [modoModal, setModoModal] = useState('criar');
-    const [medicoSelecionado, setMedicoSelecionado] = useState(null);
+    const [planoSelecionado, setPlanoSelecionado] = useState(null);
 
     const [confirmacaoExclusao, setConfirmacaoExclusao] = useState(false);
-    const [medicoParaExcluir, setMedicoParaExcluir] = useState(null);
-
+    const [planoParaExcluir, setPlanoParaExcluir] = useState(null);
+    
+    
     useEffect(() => {
 
-        async function buscarMedicos(){
+        async function buscarPlanos(){
             try {
                 setCarregando(true);
                 setErro(null);
 
-                const resposta = await fetch('http://localhost:3000/medicos');
+                const resposta = await fetch('http://localhost:3000/planos-saude');
 
                 if(!resposta.ok){
-                    throw new Error(`Erro ao buscar médicos: ${resposta.status} ${resposta.statusText}`);
+                    throw new Error(`Erro ao buscar planos de saúde: ${resposta.status} ${resposta.statusText}`);
                 }
 
                 const dados = await resposta.json();
-                setMedicos(dados);
+                setPlanos(dados);
 
             }catch (error) {
-                setErro('Não foi possível carregar a lista de médicos.');
+                setErro('Não foi possível carregar a lista de planos de saúde.');
             }finally {
                 setCarregando(false);
             }
 
         }
-        buscarMedicos();
+        buscarPlanos();
     }, []);
 
     async function abrirModalCriar(p) {
         setModoModal('criar');
-        setMedicoSelecionado(null);
+        setPlanoSelecionado(null);
         setModalAberto(true);
         
     }
 
-    async function abrirModalEditar(medico) { 
+    async function abrirModalEditar(plano) { 
         setModoModal('editar');
-        setMedicoSelecionado(medico);
+        setPlanoSelecionado(plano);
         setModalAberto(true);
     }
 
     async function fecharModal() {
         setModalAberto(false);
     }
-
-    async function abrirConfirmacaoExclusao(medico){
+    async function abrirConfirmacaoExclusao(plano){
         setConfirmacaoExclusao(true);
-        setMedicoParaExcluir(medico);
+        setPlanoParaExcluir(plano);
     }
     function cancelarExclusao(){
         setConfirmacaoExclusao(false);
-        setMedicoParaExcluir(null);
+        setPlanoParaExcluir(null);
     }
 
-    async function excluirMedico(){
-        if(!medicoParaExcluir || !medicoParaExcluir.id) return;
+    async function excluirPlano(){
+        if(!planoParaExcluir || !planoParaExcluir.id) return;
 
         try {
-            const resposta = await fetch(`http://localhost:3000/medicos/${medicoParaExcluir.id}`, {
+            
+            const resposta = await fetch(`http://localhost:3000/planos-saude/${planoParaExcluir.id}`, {
                 method: 'DELETE',
             });
 
             if(!resposta.ok){
-                throw new Error("Erro ao excluir médico.");
+                throw new Error("Erro ao excluir plano de saúde.");
             }
 
-            setMedicos((medicosAnteriores) => 
-                medicosAnteriores.filter((m) => m.id !== medicoParaExcluir.id)
+            setPlanos((planosAnteriores) => 
+                planosAnteriores.filter((m) => m.id !== planoParaExcluir.id)
             );
 
             setConfirmacaoExclusao(false);
-            setMedicoParaExcluir(null);
+            setPlanoParaExcluir(null);
         
         }catch (error) {
             console.error(error);
-            alert('Não foi possível excluir o médico.');
+            alert('Não foi possível excluir o plano de saúde.');
         }
     }
 
 
-    async function handleSubmitMedico(dadosForm) {
+    async function handleSubmitPlano(dadosForm) {
 
         try{
 
             if(modoModal === 'criar'){
-                const resposta = await fetch('http://localhost:3000/medicos', {
+                const resposta = await fetch('http://localhost:3000/planos-saude', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -131,13 +120,13 @@ function Medicos() {
                 });
 
                 if(!resposta.ok){
-                    throw new Error("Erro ao criar médico.");
+                    throw new Error("Erro ao criar plano de saúde.");
                 }  
-            const medicoCriado = await resposta.json();
-            setMedicos((anteriores)=> [...anteriores, medicoCriado]);   
+            const planoCriado = await resposta.json();
+            setPlanos((anteriores)=> [...anteriores, planoCriado]);   
 
-            }else if(modoModal==='editar' && medicoSelecionado){
-                const resposta = await fetch(`http://localhost:3000/medicos/${medicoSelecionado.id}`, {
+            }else if(modoModal==='editar' && planoSelecionado){
+                const resposta = await fetch(`http://localhost:3000/planos-saude/${planoSelecionado.id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -146,13 +135,13 @@ function Medicos() {
                 });
 
                 if(!resposta.ok){
-                    throw new Error("Erro ao atualizar médico.");
+                    throw new Error("Erro ao atualizar plano de saúde.");
                 }
-                const medicoAtualizado = await resposta.json();
+                const planoAtualizado = await resposta.json();
 
-                setMedicos((anteriores) => 
-                    anteriores.map((medico) => 
-                        medico.id === medicoAtualizado.id ? medicoAtualizado: medico
+                setPlanos((anteriores) => 
+                    anteriores.map((plano) => 
+                        plano.id === planoAtualizado.id ? planoAtualizado: plano
                     )
                 );
             }
@@ -161,7 +150,7 @@ function Medicos() {
 
         }catch (error) {
             console.error(error);
-            alert('Não foi possível salvar o médico.');   
+            alert('Não foi possível salvar o plano de saúde.');   
         }
 
 
@@ -173,7 +162,7 @@ function Medicos() {
         <>
             <div className="page-header">
                 <div>
-                    <h1 className="page-title">Médicos</h1>
+                    <h1 className="page-title">Planos de Saúde</h1>
 
                 </div>
 
@@ -185,43 +174,37 @@ function Medicos() {
                 </button>
             </div>
 
-                {carregando && <p>Carregando médicos...</p>}
+                {carregando && <p>Carregando planos...</p>}
                 {erro && (<p style={{color:'red', marginBottom: '1rem'}}>{erro}</p>)}
 
                 {!carregando && !erro && (
                     <div className="table-wrapper">
-                        <table className="medicos-table">
+                        <table className="planos-table">
                             <thead>
                                 <tr>
-                                    <th>Nome Completo</th>
-                                    <th>CPF</th>
-                                    <th>CRM</th>
-                                    <th>Data de Nascimento</th>
-                                    <th>Planos de Saúde</th>
+                                    <th>Nome</th>
+                                    <th>Valor</th>
                                     <th style={{ width: '150px' }}>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {medicos.map((medico) => (
-                                    <tr key={medico.id}>
-                                        <td>{medico.nomeCompleto}</td>
-                                        <td>{medico.cpf}</td>
-                                        <td>{medico.crm}</td>
-                                        <td>{medico.dataNascimento? new Date( medico.dataNascimento,).toLocaleDateString('pt-BR'): ''}</td>
-                                        <td>{formatarPlanosSaude(medico.planosSaude)}</td>
+                                {planos.map((plano) => (
+                                    <tr key={plano.id}>
+                                        <td>{plano.nome}</td>
+                                        <td>{plano.valor}</td>
                                         <td>
-                                            <div className="medicos-actions">
+                                            <div className="planos-actions">
                                                 <button
                                                     type="button"
                                                     className="button button-secondary"
-                                                    onClick={() => abrirModalEditar(medico)}
+                                                    onClick={() => abrirModalEditar(plano)}
                                                 >
                                                     Editar
                                                 </button>
                                                 <button
                                                     type="button"
                                                     className="button button-danger"
-                                                    onClick={() => abrirConfirmacaoExclusao(medico)}
+                                                    onClick={() => abrirConfirmacaoExclusao(plano)}
                                                 >
                                                     Excluir
                                                 </button>
@@ -231,10 +214,10 @@ function Medicos() {
                                 ))}
 
 
-                                {medicos.length === 0 && (
+                                {planos.length === 0 && (
                                     <tr>
                                         <td colSpan="6" style={{ textAlign: 'center' }}>
-                                            Nenhum médico encontrado.
+                                            Nenhum plano de saúde encontrado.
                                         </td>
                                     </tr>
                                 )}
@@ -243,21 +226,21 @@ function Medicos() {
                     </div>
                 )}
 
-                <MedicoFormModal
+                <PlanoFormModal
                     isOpen={modalAberto}
                     mode={modoModal}
-                    initialData={medicoSelecionado}
+                    initialData={planoSelecionado}
                     onClose={fecharModal}
-                    onSubmit={handleSubmitMedico}
+                    onSubmit={handleSubmitPlano}
                 />
                 <ConfirmExcluir
                     isOpen={confirmacaoExclusao}
                     title="Confirmar exclusão"
-                    message={medicoParaExcluir ? `Tem certeza que deseja excluir o(a) médico(a) ${medicoParaExcluir.nomeCompleto}?` : 'Tem certeza que deseja excluir este médico?'}
+                    message={planoParaExcluir ? `Tem certeza que deseja excluir o plano de saúde ${planoParaExcluir.nome}?` : 'Tem certeza que deseja excluir este plano?'}
                     confirmText="Excluir"
                     cancelText="Cancelar"
                     onClose={cancelarExclusao}
-                    onConfirm={() => excluirMedico()}
+                    onConfirm={() => excluirPlano()}
                     onCancel={cancelarExclusao}
                 />
         </> 
@@ -265,4 +248,4 @@ function Medicos() {
 
 }
 
-export default Medicos;
+export default Planos;

@@ -3,14 +3,6 @@ import { fetchPlanosSaude } from "../../services/api";
 import './PacienteFormModal.css'
 
 
-function normalizarPlanosSaude(valor){
-    // Paciente tem apenas 1 plano (string), não array
-    if(!valor) return '';
-    if(typeof valor === 'string'){
-        return valor.trim();
-    }
-    return '';
-}
 
 function validarCPF(cpf){
     cpf = cpf.replace(/[^\d]/g, '');
@@ -52,11 +44,12 @@ function pacienteFormModal({isOpen, mode ='criar', initialData, onClose, onSubmi
     const[nomeCompleto, setNomeCompleto] = useState('');
     const[cpf, setCpf] = useState('');
     const[dataNascimento, setDataNascimento] = useState('');
-    const[planoSaude, setPlanoSaude] = useState('');
+    
 
     const [opcoesPlanos, setOpcoesPlanos] = useState([]);
     const [carregandoPlanos, setCarregandoPlanos] = useState(true);
     const [erroPlanos, setErroPlanos] = useState(null);
+    const [planoSaudeId, setPlanoSaudeId] = useState('');
 
     const [erroCpf, setErroCpf] = useState(null);
 
@@ -91,20 +84,19 @@ function pacienteFormModal({isOpen, mode ='criar', initialData, onClose, onSubmi
             setCpf(formatarCPF(cpfDoBackend));
             const dataISO = initialData.dataNascimento ? new Date(initialData.dataNascimento).toISOString().substring(0,10) : '';
             setDataNascimento(dataISO);
-            setPlanoSaude(normalizarPlanosSaude(initialData.planoSaude));
+            setPlanoSaudeId(initialData.planoSaude?.id || '');
         }else{
             setNomeCompleto('');
             setCpf('');
             setDataNascimento('');
-            setPlanoSaude('');
+            setPlanoSaudeId('');
         }
 
     }, [initialData, isOpen])
     
 
-    function handleSelecionarPlano(plano){
-        // Paciente tem apenas 1 plano, então apenas define o valor
-        setPlanoSaude(plano);
+    function handleSelecionarPlano(id){
+        setPlanoSaudeId(id);
     }
 
 
@@ -123,7 +115,7 @@ function pacienteFormModal({isOpen, mode ='criar', initialData, onClose, onSubmi
             nomeCompleto,
             cpf: cpfLimpo,
             dataNascimento: dataNascimento ? new Date (dataNascimento).toISOString() : null,
-            planoSaude,
+            planoSaudeId,
         };
         console.log('Submitting form with data:', dados);
         onSubmit(dados);
@@ -182,7 +174,7 @@ function pacienteFormModal({isOpen, mode ='criar', initialData, onClose, onSubmi
 
                         {!carregandoPlanos && !erroPlanos && (
                             <select 
-                                value={planoSaude} 
+                                value={planoSaudeId} 
                                 onChange={(e) => handleSelecionarPlano(e.target.value)}
                                 required
                                 style={{
@@ -195,8 +187,8 @@ function pacienteFormModal({isOpen, mode ='criar', initialData, onClose, onSubmi
                             >
                                 <option value="">Selecione um plano</option>
                                 {opcoesPlanos.map((plano) => (
-                                    <option key={plano} value={plano}>
-                                        {plano}
+                                    <option key={plano.id} value={plano.id}>
+                                        {plano.nome}
                                     </option>
                                 ))}
                             </select>

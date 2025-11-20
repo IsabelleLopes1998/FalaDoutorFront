@@ -5,14 +5,27 @@ import './Pacientes.css'
 
 
 
-function formatarPlanosSaude(valor){
-    
-    if(!valor) return '';
-    if(typeof valor === 'string'){
-        return valor.trim();
+function formatarPlanosSaude(valor) {
+  if (!valor) return '';
+  if (Array.isArray(valor)) {
+    return valor
+      .map(p => (typeof p === 'object' && p !== null ? p.nome : p))
+      .filter(Boolean)
+      .join(', ');
+  }
+  if (typeof valor === 'object' && valor !== null) {
+    return valor.nome || valor.id || '';
+  }
+  if (typeof valor === 'string') {
+    return valor
+      .replace(/[{}]/g, '')
+      .split(',')
+      .map(p => p.trim())
+        .filter(Boolean)
+        .join(', ');
     }
     return String(valor);
-}
+  }
 
 function Pacientes() { 
 
@@ -170,7 +183,7 @@ function Pacientes() {
                     type="button"
                     className="button button-primary"
                     onClick={abrirModalCriar}
-                > Cadastrar paciente
+                > Adicionar
                 </button>
             </div>
 

@@ -19,10 +19,10 @@ function Home() {
                 <h3>Gerenciar Pacientes</h3>
                 <p>Cadastre, edite e exclua pacientes.</p>
                 </Link>
-                {/* <Link to="/pacientes" className='home-card'>
+                <Link to="/planos-saude" className='home-card'>
                 <h3>Gerenciar Planos de Saúde</h3>
                 <p>Cadastre, edite e exclua planos.</p>
-                </Link> */}
+                </Link>
             </div>
             {/* <div className='home-cards'>
                 <Link to="/medicos" className='home-card'>

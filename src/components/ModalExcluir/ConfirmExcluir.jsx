@@ -9,11 +9,12 @@ function ConfirmExcluir({
     cancelText = 'Cancelar',
     onConfirm,
     onCancel,
+    onClose,
     }) {
     if(!isOpen) return null;
 
     return(
-        <div className="confirm-backdrop">
+        <div className="confirm-backdrop" onClick={onClose}>
             <div className="confirm-dialog">
                 <h2 className="confirm-title">{title}</h2>
                 <p className="confirm-message">{message}</p>

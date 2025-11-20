@@ -5,7 +5,17 @@ import './MedicoFormModal.css'
 
 function normalizarPlanosSaude(valor){
     if(!valor) return [];
-    if(Array.isArray(valor)) return valor;
+    if(Array.isArray(valor)){
+        return valor
+            .map((plano) => {
+                if (typeof plano === 'object' && plano !== null) {
+                    return plano.id || plano.nome || '';
+                }
+                return plano;
+            })
+            .map((plano) => String(plano).trim())
+            .filter(Boolean);
+    }
     if(typeof valor === 'string'){
         return valor
         .replace(/[{}]/g, "")
@@ -110,13 +120,13 @@ function medicoFormModal({isOpen, mode ='criar', initialData, onClose, onSubmit}
     }, [initialData, isOpen])
     
 
-    function handleTogglePlano(plano){
-        console.log('Toggling plano:', plano);
+    function handleTogglePlano(planoId){
+        const idComoString = String(planoId);
         setPlanosSaude((anteriores)=>{
-            if(anteriores.includes(plano)){
-                return anteriores.filter((p)=> p !== plano);
+            if(anteriores.includes(idComoString)){
+                return anteriores.filter((p)=> p !== idComoString);
             }else{
-                return [...anteriores, plano];
+                return [...anteriores, idComoString];
             }
         })
     }
@@ -138,7 +148,7 @@ function medicoFormModal({isOpen, mode ='criar', initialData, onClose, onSubmit}
             cpf: cpfLimpo,  // Envia apenas números (sem pontos e hífen)
             crm,
             dataNascimento: dataNascimento ? new Date (dataNascimento).toISOString() : null,
-            planosSaude,
+            planosSaude: planosSaude.map((id) => Number(id) || id),
         };
         console.log('Submitting form with data:', dados);
         onSubmit(dados);
@@ -201,14 +211,14 @@ function medicoFormModal({isOpen, mode ='criar', initialData, onClose, onSubmit}
                                 {erroPlanos}</p>)}
 
                             {!carregandoPlanos && !erroPlanos && opcoesPlanos.map((plano) => (
-                                <label key={plano} className="checkbox-item">
+                                <label key={plano.id} className="checkbox-item">
                                     <input
                                         type="checkbox"
-                                        value={plano}
-                                        checked={planosSaude.includes(plano)}
-                                        onChange={() => handleTogglePlano(plano)}
+                                        value={plano.id}
+                                        checked={planosSaude.includes(String(plano.id))}
+                                        onChange={() => handleTogglePlano(plano.id)}
                                     />
-                                    {plano}
+                                    {plano.nome}
                                 </label>
                             ))}
                             
