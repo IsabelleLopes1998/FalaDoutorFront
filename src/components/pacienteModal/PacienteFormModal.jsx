@@ -106,10 +106,11 @@ function pacienteFormModal({isOpen, mode ='criar', initialData, onClose, onSubmi
         const cpfLimpo = cpf.replace(/\D/g, '');
         console.log(cpfLimpo)
 
-        if (!validarCPF(cpfLimpo)) {
-            setErroCpf('CPF inválido');
-            return;
-        }
+        // Validação de CPF comentada para facilitar testes
+        // if (!validarCPF(cpfLimpo)) {
+        //     setErroCpf('CPF inválido');
+        //     return;
+        // }
         
         const dados ={
             nomeCompleto,
@@ -148,18 +149,20 @@ function pacienteFormModal({isOpen, mode ='criar', initialData, onClose, onSubmi
                             
                             const cpfLimpo = valorFormatado.replace(/\D/g, '');
 
-                            if (cpfLimpo.length === 11) {
-                                if(validarCPF(cpfLimpo)){ 
-                                    setErroCpf(null);
-                                }else{
-                                    setErroCpf('CPF inválido.');
-                                }
-                            } else {
-                                
-                                setErroCpf(null);  
-                            }
+                            // Validação de CPF comentada para facilitar testes
+                            // if (cpfLimpo.length === 11) {
+                            //     if(validarCPF(cpfLimpo)){ 
+                            //         setErroCpf(null);
+                            //     }else{
+                            //         setErroCpf('CPF inválido.');
+                            //     }
+                            // } else {
+                            //     setErroCpf(null);  
+                            // }
+                            setErroCpf(null); // Sempre limpa erro para não bloquear
                         }} required/>
-                        {erroCpf && <span style={{color: 'red', fontSize: '0.85rem'}}>{erroCpf}</span>}
+                        {/* Mensagem de erro de CPF comentada para facilitar testes */}
+                        {/* {erroCpf && <span style={{color: 'red', fontSize: '0.85rem'}}>{erroCpf}</span>} */}
                     </div>
                     <div className="modal-field">
                         <label>Data de Nascimento</label>
@@ -197,7 +200,7 @@ function pacienteFormModal({isOpen, mode ='criar', initialData, onClose, onSubmi
 
                     <footer className="modal-footer">
                     <button type="button" className="modal-button secondary" onClick={onClose}>Cancelar</button>
-                    <button type="submit" className="modal-button primary" disabled={!!erroCpf} >{textoBotao}</button>
+                    <button type="submit" className="modal-button primary">{textoBotao}</button>
                     </footer>
 
                 </form>

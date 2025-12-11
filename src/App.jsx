@@ -3,6 +3,7 @@ import Home from './pages/home/Home.jsx';
 import Medicos from './pages/medicos/Medicos.jsx';
 import Pacientes from './pages/pacientes/Pacientes.jsx';
 import Planos from './pages/planos/Planos.jsx';
+import Consultas from './pages/consultas/Consultas.jsx';
 import './App.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
               <Link to="/medicos" className='app-nav-link'>Médicos</Link>
               <Link to="/pacientes" className='app-nav-link'>Pacientes</Link>
               <Link to="/planos-saude" className='app-nav-link'>Planos de Saúde</Link>
+              <Link to="/consultas" className='app-nav-link'>Consultas</Link>
             </nav>
           </div>
         </header>
@@ -28,6 +30,7 @@ function App() {
               <Route path='/medicos' element={<Medicos />} />
               <Route path='/pacientes' element={<Pacientes />} />
               <Route path='/planos-saude' element={<Planos />} />
+              <Route path='/consultas' element={<Consultas />} />
             </Routes>
           </div>
         </main>

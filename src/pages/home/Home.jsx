@@ -24,21 +24,21 @@ function Home() {
                 <p>Cadastre, edite e exclua planos.</p>
                 </Link>
             </div>
-            {/* <div className='home-cards'>
-                <Link to="/medicos" className='home-card'>
-                <h3>Próximos Cadastros</h3>
-                <p className='home-font-card'>Cadastre, edite e exclua médicos.</p>
+            <div className='home-cards'>
+                <Link to="/consultas" className='home-card'>
+                <h3>Gerenciar Consultas</h3>
+                <p className='home-font-card'>Cadastre, edite e exclua consultas.</p>
                 </Link>
 
-                <Link to="/pacientes" className='home-card'>
+                {/* <Link to="/pacientes" className='home-card'>
                 <h3>Próximos Cadastros</h3>
                 <p>Cadastre, edite e exclua pacientes.</p>
                 </Link>
                 <Link to="/pacientes" className='home-card'>
                 <h3>Próximos Cadastros</h3>
                 <p>Cadastre, edite e exclua planos.</p>
-                </Link>
-            </div> */}
+                </Link> */}
+            </div>
             
         </div>
     )
