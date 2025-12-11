@@ -180,6 +180,7 @@ function Consultas() {
                                     <th>Hora</th>
                                     <th>Plano de Saúde para atendimento</th>
                                     <th>Valor</th>
+                                    <th>Status</th>
                                     <th style={{ width: '150px' }}>Ações</th>
                                 </tr>
                             </thead>
@@ -195,6 +196,13 @@ function Consultas() {
                                             {consulta.valor 
                                                 ? `R$ ${parseFloat(consulta.valor).toFixed(2).replace('.', ',')}` 
                                                 : '-'}
+                                        </td>
+                                        <td>
+                                            <span 
+                                                className={`status-badge ${consulta.status === 'valida' ? 'status-valida' : 'status-invalida'}`}
+                                            >
+                                                {consulta.status === 'valida' ? 'Válida' : (consulta.status === 'invalida' ? 'Inválida' : '-')}
+                                            </span>
                                         </td>
                                         <td>
                                             <div className="consultas-actions">
@@ -220,7 +228,7 @@ function Consultas() {
 
                                 {consultas.length === 0 && (
                                     <tr>
-                                        <td colSpan="7" style={{ textAlign: 'center' }}>
+                                        <td colSpan="8" style={{ textAlign: 'center' }}>
                                             Nenhuma consulta encontrada.
                                         </td>
                                     </tr>
